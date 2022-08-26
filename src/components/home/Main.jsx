@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-export default function Main({ authState }) {
-  const [input, setInput] = useState({ email: '', password: '' });
+export default function Main({ authState, symbol }) {
+  const [companyData, setCompanyData] = useState('');
 
-  const changeHandler = (e) => setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  const signInHandler = async (event) => {
-    event.preventDefault();
-    // console.log(input);
-    if (input.email !== '' && input.password !== '') {
-      const response = await fetch('/api/v1/auth', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(input),
-      });
-    }
-  };
+  console.log(symbol);
+
+  useEffect(() => {
+    fetch('/api/v1/companydata', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ symbol }),
+    });
+    // .then((res) => res.json())
+    // .then((data) => setCompanyData(data));
+  }, []);
+
   return (
     <div className="mx-auto mt-5" style={{ width: '400px' }}>
       <div style={{ height: '50px' }} />
@@ -23,7 +23,7 @@ export default function Main({ authState }) {
       {authState ? (
         <>
           <div className="mx-auto mt-5" style={{ width: '400px' }}>
-            <form className="container zalupa rounded-3 py-3 item" align="center" onSubmit={signInHandler}>
+            <form className="container zalupa rounded-3 py-3 item" align="center">
               <div className="mb-3">
                 <Link to="/search"><h2 className="charnews">Find the company you need</h2></Link>
               </div>

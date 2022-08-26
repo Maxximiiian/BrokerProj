@@ -1,9 +1,13 @@
 import express from 'express';
+
 import authRouter from './authRouter';
 // import authCheck from '../middlewares/authCheck';
 import {
   User, Company, Search,
 } from '../../db/models';
+
+const path = require('path');
+const fs = require('fs').promises;
 
 const route = express.Router();
 
@@ -16,14 +20,31 @@ route.route('/search')
       const companies = await Company.findAll();
       const matchCompany = companies.filter((x) => (x.dataValues.name.toLowerCase())
         .includes(body.toLowerCase()));
-      if (matchCompany.length !== 0) {
-        res.json(JSON.parse(JSON.stringify(matchCompany)));
-      }
+      // if (matchCompany.length !== 0) {
+      res.json(JSON.parse(JSON.stringify(matchCompany)));
+      // }
     } catch (err) {
       console.error(err);
     }
   });
 
+route.route('/companydata')
+  .post(async (req, res) => {
+    const { symbol } = req.body;
+    try {
+      if (symbol === 'IVV') {
+        const data = (
+          await fs.readFile(path.join(__dirname, '../../db/seeders/indexdata.txt'), 'utf-8')
+        );
+        res.json(JSON.parse(JSON.stringify(data)));
+      }
+      // if (matchCompany.length !== 0) {
+      // res.json(JSON.parse(JSON.stringify(matchCompany)));
+      // }
+    } catch (err) {
+      console.error(err);
+    }
+  });
 // route.route('/posts')
 //   .get(async (req, res) => {
 //     const posts = await Post.findAll();
